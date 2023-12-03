@@ -7,11 +7,28 @@ path_elf2rpl = dkp_root + '/tools/bin/elf2rpl'
 path_rplimportgen = dkp_root + '/tools/bin/rplimportgen'
 path_rplexportgen = dkp_root + '/tools/bin/rplexportgen'
 
-files_cafecompiler = files(
+files_cafecompiler_tests = files(
 'cafe_glsl_compiler.cpp', 
 'cafe_glsl_compiler.h',
 'api.cpp',
 'tests.cpp'
+)
+
+files_cafecompiler = files(
+'cafe_glsl_compiler.cpp', 
+'cafe_glsl_compiler.h',
+'api.cpp',
+'compiler.cpp'
+)
+
+cafeglslcompilertests = executable('glsltest', [files_cafecompiler_tests],
+  include_directories : [
+    inc_src, inc_mapi, inc_mesa, inc_include, inc_compiler, inc_gallium, inc_gallium_aux, inc_amd_common,
+  ],
+  link_with : [libglsl, libgallium, libmesa, libglapi_static, libgalliumvl, libr600],
+  dependencies: [dep_libdrm_radeon, dep_elf, idep_nir, idep_nir_headers, idep_mesautil, driver_r600],
+  override_options: ['cpp_std=c++17'],
+  gnu_symbol_visibility : 'hidden',
 )
 
 cafeglslcompiler = executable('glslcompiler', [files_cafecompiler],
@@ -23,6 +40,7 @@ cafeglslcompiler = executable('glslcompiler', [files_cafecompiler],
   override_options: ['cpp_std=c++17'],
   gnu_symbol_visibility : 'hidden',
 )
+
 
 if host_machine.system() == 'cafeos'
 custom_target('BuildRPX',
